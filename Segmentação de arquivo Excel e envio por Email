@@ -1,3 +1,5 @@
+# ESTE CÓDIGO REALIZA A LEITURA DE UM ARQUIVO EXCEL DE VENDAS, SEGMENTA OS DADOS POR VENDEDOR EM NOVOS ARQUIVOS EXCEL E REALIZA O ENVIO POR EMAIL PARA CADA VENDEDOR
+
 import pandas as pd
 import os
 import win32com.client as win32
@@ -25,9 +27,12 @@ for index, row in email_df.iterrows():
 
         # Corpo do e-mail em HTML
         corpo_email_html = f"""
-        <p style="color:red;"><strong>NÃO RESPONDA ESTE EMAIL</strong></p>
+        
         <p>Olá {nome_vendedor},</p>
-        <p>Segue seu extrato de vendas de Janeiro/2024.</p>
+        <p></p>
+        <p>Segue seu extrato de vendas.</p>
+        <p></p>
+         <p style="color:red;"><strong>NÃO RESPONDA ESTE EMAIL</strong></p>
         """
 
         # Configurar o corpo do e-mail como HTML
