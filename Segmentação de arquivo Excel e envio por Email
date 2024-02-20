@@ -1,0 +1,46 @@
+import pandas as pd
+import os
+import win32com.client as win32
+
+# Leitura do arquivo Email.xlsx
+email_df = pd.read_excel('C:/Users/Lucas Couto/Documents/Lotus/Automacoes/Email.xlsx')
+
+# Caminho do diretório onde os arquivos Excel foram salvos
+diretorio_arquivos = 'C:\\Users\\Lucas Couto\\Documents\\Lotus\\Automacoes\\TESTE\\'
+
+# Iteração pelos vendedores
+for index, row in email_df.iterrows():
+    id_vendedor = row['id_vendedor']
+    nome_vendedor = row['nome_vendedor']
+    email_vendedor = row['Email_vendedor']
+
+    # Verificar se o arquivo Excel existe para o vendedor
+    arquivo_path = os.path.join(diretorio_arquivos, f'{id_vendedor}_Vendas.xlsx')
+    if os.path.exists(arquivo_path):
+        # Configurar o Outlook
+        outlook = win32.Dispatch('outlook.application')
+        mail = outlook.CreateItem(0)
+        mail.To = email_vendedor
+        mail.Subject = f"Olá {nome_vendedor}"
+
+        # Corpo do e-mail em HTML
+        corpo_email_html = f"""
+        <p style="color:red;"><strong>NÃO RESPONDA ESTE EMAIL</strong></p>
+        <p>Olá {nome_vendedor},</p>
+        <p>Segue seu extrato de vendas de Janeiro/2024.</p>
+        """
+
+        # Configurar o corpo do e-mail como HTML
+        mail.HTMLBody = corpo_email_html
+
+        # Adicionar o arquivo Excel como anexo
+        mail.Attachments.Add(arquivo_path)
+
+        # Enviar o e-mail
+        mail.Send()
+
+        print(f'E-mail enviado para {nome_vendedor} ({email_vendedor}) com sucesso!')
+    else:
+        print(f'Arquivo Excel não encontrado para {nome_vendedor} ({email_vendedor}).')
+
+print("Processo concluído.")
