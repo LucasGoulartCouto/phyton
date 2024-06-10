@@ -1,0 +1,56 @@
+import time
+import shutil
+import os
+from selenium.webdriver.common.by import By
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+def executar_extracao(email, senha, novo_nome):
+    # Configuração do Selenium
+    servico = Service(ChromeDriverManager().install())
+    navegador = webdriver.Chrome(service=servico)
+
+    origem = 'DIGITE O CAMINHA DA SUA PASTA DE DOWNLOAD'
+    destino = 'DIGITE O CAMINHA DA PASTA DESTINO ONDE O ARQUIVO SERA SALVO'
+
+    navegador.get('https://login.contaazul.com/#/')
+    time.sleep(1)
+
+    # Preenchendo e-mail e senha
+    campo_input_email = navegador.find_element(By.XPATH , '/html/body/div/div/div[1]/div/div/div[2]/div/div/div[3]/div/div/form/div/div/div[1]/div/div/div[1]/input')
+    campo_input_email.send_keys(email)
+    time.sleep(1)
+
+    campo_input_senha = navegador.find_element(By.XPATH , '/html/body/div/div/div[1]/div/div/div[2]/div/div/div[3]/div/div/form/div/div/div[2]/div/div/div/input')
+    campo_input_senha.send_keys(senha)
+    time.sleep(1)
+
+    campo_clicar_entrar = navegador.find_element(By.XPATH ,'/html/body/div/div/div[1]/div/div/div[2]/div/div/div[3]/div/div/form/div/div/div[4]/div/div/span/button').click()
+    time.sleep(7)
+
+    navegador.get('https://app.contaazul.com/#/ca/financeiro/extrato')
+    time.sleep(6)
+
+    # Acesso ao extrato financeiro
+    campo_extrato_movimentacao_periodo = navegador.find_element(By.XPATH , '//*[@id="gateway"]/section/div[3]/div[2]/div[2]/div/div/div[2]/div/div[1]/div[2]/div[1]/div/div/div/div/div/div[1]/span/button/div').click()
+    time.sleep(3)
+
+    campo_extrato_movimentacao_TodoPeriodo = navegador.find_element(By.XPATH , '//*[@id="gateway"]/section/div[3]/div[2]/div[2]/div/div/div[2]/div/div[1]/div[2]/div[1]/div/div/div/div/div/div[2]/div[7]/span').click()
+    time.sleep(3)
+
+    campo_extrato_movimentacao_TodoPeriodo = navegador.find_element(By.XPATH , '//*[@id="gateway"]/section/div[2]/div/nav/div/div/div[1]/div[2]/div/div[1]/span/button/div').click()
+    time.sleep(4)
+
+    navegador.close()
+
+    # Renomear e mover arquivo
+    os.rename(origem, os.path.join(os.path.dirname(origem), novo_nome))
+    novo_caminho = os.path.join(os.path.dirname(origem), novo_nome)
+    time.sleep(3)
+    if os.path.exists(os.path.join(destino, novo_nome)):
+        os.remove(os.path.join(destino, novo_nome))
+    shutil.move(novo_caminho, destino)
+
+# Executando a extração
+executar_extracao('DIGITE SEU EMAIL DE LOGIN', 'DIGITE SUA SENHA', 'DIGITE O NOVO NOME DO ARQUIVO COM A EXTENSÃO')
